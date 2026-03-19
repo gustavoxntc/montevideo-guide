@@ -35,29 +35,26 @@ export const busLines: BusLine[] = [
     from: 'Tres Cruces',
     to: 'Ciudad Vieja',
     route: [
-      [-34.8970, -56.1795],
-      [-34.8968, -56.1710],
-      [-34.9005, -56.1660],
-      [-34.9039, -56.1643],
-      [-34.9113, -56.1620],
-      [-34.9163, -56.1680],
-      [-34.9183, -56.1800],
-      [-34.9155, -56.1930],
-      [-34.9100, -56.2050],
-      [-34.9063, -56.2090],
-      [-34.9060, -56.2137],
+      [-34.897, -56.178], // Tres Cruces
+      [-34.901, -56.163], // Bulevar España / Pocitos norte
+      [-34.916, -56.157], // Rambla Pocitos (baja a la costa)
+      [-34.920, -56.167], // Rambla Rep. de Francia
+      [-34.921, -56.178], // Rambla Punta Trouville
+      [-34.920, -56.190], // Rambla Gandhi
+      [-34.917, -56.200], // Rambla 25 de Agosto
+      [-34.910, -56.208], // Puerto / Rambla Portuaria
+      [-34.906, -56.214], // Ciudad Vieja – Sarandí
     ],
     stops: [
-      { id: '117-1', name: 'Terminal Tres Cruces', lat: -34.8970, lng: -56.1795 },
-      { id: '117-2', name: 'Parque Batlle – Av. Italia', lat: -34.8968, lng: -56.1710 },
-      { id: '117-3', name: 'Bulevar España – Luis Piera', lat: -34.9005, lng: -56.1660 },
-      { id: '117-4', name: 'Ellauri – Pocitos', lat: -34.9039, lng: -56.1643 },
-      { id: '117-5', name: 'Rambla Rep. de Francia', lat: -34.9113, lng: -56.1620 },
-      { id: '117-6', name: 'Rambla Punta Trouville', lat: -34.9163, lng: -56.1680 },
-      { id: '117-7', name: 'Rambla Gandhi', lat: -34.9183, lng: -56.1800 },
-      { id: '117-8', name: 'Rambla 25 de Agosto', lat: -34.9155, lng: -56.1930 },
-      { id: '117-9', name: 'Puerto – Rambla Portuaria', lat: -34.9100, lng: -56.2050 },
-      { id: '117-10', name: 'Ciudad Vieja – Sarandí', lat: -34.9060, lng: -56.2137 },
+      { id: '117-1', name: 'Terminal Tres Cruces', lat: -34.897, lng: -56.178 },
+      { id: '117-2', name: 'Bulevar España – Pocitos', lat: -34.901, lng: -56.163 },
+      { id: '117-3', name: 'Rambla Pocitos', lat: -34.916, lng: -56.157 },
+      { id: '117-4', name: 'Rambla Rep. de Francia', lat: -34.920, lng: -56.167 },
+      { id: '117-5', name: 'Rambla Punta Trouville', lat: -34.921, lng: -56.178 },
+      { id: '117-6', name: 'Rambla Gandhi', lat: -34.920, lng: -56.190 },
+      { id: '117-7', name: 'Rambla 25 de Agosto', lat: -34.917, lng: -56.200 },
+      { id: '117-8', name: 'Puerto – Rambla Portuaria', lat: -34.910, lng: -56.208 },
+      { id: '117-9', name: 'Ciudad Vieja – Sarandí', lat: -34.906, lng: -56.214 },
     ],
     schedule: {
       frequency: 'Cada 10–15 min (hora pico), cada 20 min (fuera de pico)',
@@ -69,6 +66,8 @@ export const busLines: BusLine[] = [
     },
   },
   {
+    // Punta Gorda → Av. Italia → Tres Cruces → Goes → 18 de Julio →
+    // Plaza Independencia → Av. Agraciada al norte → noroeste → Cerro
     id: '121',
     number: '121',
     name: 'Punta Gorda – Cerro (vía 18 de Julio)',
@@ -76,32 +75,33 @@ export const busLines: BusLine[] = [
     from: 'Punta Gorda',
     to: 'Cerro',
     route: [
-      [-34.8950, -56.1100],
-      [-34.8955, -56.1240],
-      [-34.8960, -56.1380],
-      [-34.8968, -56.1500],
-      [-34.8975, -56.1640],
-      [-34.8980, -56.1730],
-      [-34.8990, -56.1810],
-      [-34.9010, -56.1880],
-      [-34.9020, -56.1980],
-      [-34.9050, -56.2050],
-      [-34.9200, -56.2250],
-      [-34.9310, -56.2300],
+      [-34.895, -56.093], // Punta Gorda
+      [-34.897, -56.116], // Buceo – Av. Rivera
+      [-34.897, -56.135], // Malvín Norte
+      [-34.895, -56.156], // Parque Batlle – Av. Italia
+      [-34.897, -56.178], // Tres Cruces
+      [-34.899, -56.189], // Barrio Goes
+      [-34.906, -56.190], // 18 de Julio – Centro
+      [-34.906, -56.196], // Plaza Independencia
+      [-34.898, -56.203], // Av. Agraciada norte
+      [-34.887, -56.211], // Bella Vista / Bvar. Batlle
+      [-34.882, -56.224], // Paso de la Arena / acceso Cerro
+      [-34.893, -56.244], // Av. Carlos María Ramírez
+      [-34.893, -56.257], // Terminal Cerro
     ],
     stops: [
-      { id: '121-1', name: 'Punta Gorda – Av. Brasil', lat: -34.8950, lng: -56.1100 },
-      { id: '121-2', name: 'Buceo – Av. Rivera', lat: -34.8955, lng: -56.1240 },
-      { id: '121-3', name: 'Malvín Norte', lat: -34.8960, lng: -56.1380 },
-      { id: '121-4', name: 'Parque Batlle – Av. Italia', lat: -34.8968, lng: -56.1500 },
-      { id: '121-5', name: 'Av. Italia esq. Comercio', lat: -34.8975, lng: -56.1640 },
-      { id: '121-6', name: 'Terminal Tres Cruces', lat: -34.8980, lng: -56.1730 },
-      { id: '121-7', name: 'Barrio Goes', lat: -34.8990, lng: -56.1810 },
-      { id: '121-8', name: 'Centro – 18 de Julio', lat: -34.9010, lng: -56.1880 },
-      { id: '121-9', name: 'Plaza Independencia', lat: -34.9020, lng: -56.1980 },
-      { id: '121-10', name: 'Puerto de Montevideo', lat: -34.9050, lng: -56.2050 },
-      { id: '121-11', name: 'Barrio Sur', lat: -34.9200, lng: -56.2250 },
-      { id: '121-12', name: 'Terminal Cerro', lat: -34.9310, lng: -56.2300 },
+      { id: '121-1', name: 'Punta Gorda – Av. Brasil', lat: -34.895, lng: -56.093 },
+      { id: '121-2', name: 'Buceo – Av. Rivera', lat: -34.897, lng: -56.116 },
+      { id: '121-3', name: 'Malvín Norte', lat: -34.897, lng: -56.135 },
+      { id: '121-4', name: 'Parque Batlle – Av. Italia', lat: -34.895, lng: -56.156 },
+      { id: '121-5', name: 'Terminal Tres Cruces', lat: -34.897, lng: -56.178 },
+      { id: '121-6', name: 'Barrio Goes', lat: -34.899, lng: -56.189 },
+      { id: '121-7', name: '18 de Julio – Centro', lat: -34.906, lng: -56.190 },
+      { id: '121-8', name: 'Plaza Independencia', lat: -34.906, lng: -56.196 },
+      { id: '121-9', name: 'Av. Agraciada – Cuareim', lat: -34.898, lng: -56.203 },
+      { id: '121-10', name: 'Bella Vista – Bvar. Batlle', lat: -34.887, lng: -56.211 },
+      { id: '121-11', name: 'Av. Carlos María Ramírez', lat: -34.893, lng: -56.244 },
+      { id: '121-12', name: 'Terminal Cerro', lat: -34.893, lng: -56.257 },
     ],
     schedule: {
       frequency: 'Cada 12–18 min (días hábiles), cada 25 min (fines de semana)',
@@ -113,6 +113,7 @@ export const busLines: BusLine[] = [
     },
   },
   {
+    // Paso Molino (noroeste) → Bvar. Batlle y Ordóñez → Tres Cruces → Av. Italia → Malvín (este)
     id: '103',
     number: '103',
     name: 'Paso Molino – Malvín',
@@ -120,28 +121,28 @@ export const busLines: BusLine[] = [
     from: 'Paso Molino',
     to: 'Malvín',
     route: [
-      [-34.8750, -56.2100],
-      [-34.8800, -56.2000],
-      [-34.8850, -56.1900],
-      [-34.8880, -56.1820],
-      [-34.8900, -56.1740],
-      [-34.8940, -56.1650],
-      [-34.8950, -56.1550],
-      [-34.8958, -56.1440],
-      [-34.8963, -56.1310],
-      [-34.8970, -56.1180],
+      [-34.875, -56.213], // Paso Molino terminal
+      [-34.879, -56.200], // Barrio Prado
+      [-34.882, -56.190], // Reducto – Bvar. Batlle y Ordóñez
+      [-34.888, -56.183], // Estadio Centenario
+      [-34.892, -56.173], // Parque Batlle Norte
+      [-34.897, -56.178], // Tres Cruces
+      [-34.895, -56.165], // Parque Batlle Sur – Av. Italia
+      [-34.897, -56.149], // Av. Italia – Comercio
+      [-34.901, -56.128], // Buceo – Rambla
+      [-34.901, -56.113], // Terminal Malvín
     ],
     stops: [
-      { id: '103-1', name: 'Terminal Paso Molino', lat: -34.8750, lng: -56.2100 },
-      { id: '103-2', name: 'Barrio Prado', lat: -34.8800, lng: -56.2000 },
-      { id: '103-3', name: 'Reducto – Bvar. Batlle y Ordóñez', lat: -34.8850, lng: -56.1900 },
-      { id: '103-4', name: 'Estadio Centenario', lat: -34.8880, lng: -56.1820 },
-      { id: '103-5', name: 'Parque Batlle Norte', lat: -34.8900, lng: -56.1740 },
-      { id: '103-6', name: 'Terminal Tres Cruces', lat: -34.8940, lng: -56.1650 },
-      { id: '103-7', name: 'Parque Batlle Sur', lat: -34.8950, lng: -56.1550 },
-      { id: '103-8', name: 'Av. Italia – Comercio', lat: -34.8958, lng: -56.1440 },
-      { id: '103-9', name: 'Buceo – Rambla', lat: -34.8963, lng: -56.1310 },
-      { id: '103-10', name: 'Terminal Malvín', lat: -34.8970, lng: -56.1180 },
+      { id: '103-1', name: 'Terminal Paso Molino', lat: -34.875, lng: -56.213 },
+      { id: '103-2', name: 'Barrio Prado', lat: -34.879, lng: -56.200 },
+      { id: '103-3', name: 'Reducto – Bvar. Batlle y Ordóñez', lat: -34.882, lng: -56.190 },
+      { id: '103-4', name: 'Estadio Centenario', lat: -34.888, lng: -56.183 },
+      { id: '103-5', name: 'Parque Batlle Norte', lat: -34.892, lng: -56.173 },
+      { id: '103-6', name: 'Terminal Tres Cruces', lat: -34.897, lng: -56.178 },
+      { id: '103-7', name: 'Av. Italia – Parque Batlle Sur', lat: -34.895, lng: -56.165 },
+      { id: '103-8', name: 'Av. Italia – Comercio', lat: -34.897, lng: -56.149 },
+      { id: '103-9', name: 'Buceo – Rambla', lat: -34.901, lng: -56.128 },
+      { id: '103-10', name: 'Terminal Malvín', lat: -34.901, lng: -56.113 },
     ],
     schedule: {
       frequency: 'Cada 15–20 min',
@@ -153,6 +154,8 @@ export const busLines: BusLine[] = [
     },
   },
   {
+    // Cerro (noroeste) → Av. C.M. Ramírez → Av. Agraciada → Centro →
+    // 18 de Julio → Av. Italia → Buceo → Punta Gorda (este)
     id: 'G',
     number: 'G',
     name: 'Cerro – Punta Gorda',
@@ -160,30 +163,32 @@ export const busLines: BusLine[] = [
     from: 'Cerro',
     to: 'Punta Gorda',
     route: [
-      [-34.9310, -56.2300],
-      [-34.9200, -56.2220],
-      [-34.9100, -56.2120],
-      [-34.9030, -56.1980],
-      [-34.9010, -56.1850],
-      [-34.8990, -56.1730],
-      [-34.8975, -56.1620],
-      [-34.8960, -56.1500],
-      [-34.8950, -56.1380],
-      [-34.8940, -56.1240],
-      [-34.8930, -56.1100],
+      [-34.893, -56.257], // Cerro terminal
+      [-34.893, -56.244], // Av. Carlos María Ramírez
+      [-34.882, -56.224], // Paso de la Arena
+      [-34.887, -56.211], // Bella Vista
+      [-34.898, -56.203], // Av. Agraciada
+      [-34.906, -56.196], // Plaza Independencia
+      [-34.906, -56.190], // 18 de Julio – Centro
+      [-34.899, -56.189], // Barrio Goes
+      [-34.897, -56.178], // Tres Cruces
+      [-34.895, -56.156], // Parque Batlle – Av. Italia
+      [-34.897, -56.135], // Malvín Norte
+      [-34.897, -56.116], // Buceo – Av. Rivera
+      [-34.895, -56.093], // Punta Gorda
     ],
     stops: [
-      { id: 'G-1', name: 'Terminal Cerro', lat: -34.9310, lng: -56.2300 },
-      { id: 'G-2', name: 'Barrio Sur', lat: -34.9200, lng: -56.2220 },
-      { id: 'G-3', name: 'Puerto – Ciudad Vieja', lat: -34.9100, lng: -56.2120 },
-      { id: 'G-4', name: 'Plaza Independencia', lat: -34.9030, lng: -56.1980 },
-      { id: 'G-5', name: '18 de Julio – Florida', lat: -34.9010, lng: -56.1850 },
-      { id: 'G-6', name: 'Barrio Goes', lat: -34.8990, lng: -56.1730 },
-      { id: 'G-7', name: 'Tres Cruces', lat: -34.8975, lng: -56.1620 },
-      { id: 'G-8', name: 'Parque Batlle', lat: -34.8960, lng: -56.1500 },
-      { id: 'G-9', name: 'Av. Italia – Comercio', lat: -34.8950, lng: -56.1380 },
-      { id: 'G-10', name: 'Buceo – 26 de Marzo', lat: -34.8940, lng: -56.1240 },
-      { id: 'G-11', name: 'Punta Gorda – Av. Brasil', lat: -34.8930, lng: -56.1100 },
+      { id: 'G-1', name: 'Terminal Cerro', lat: -34.893, lng: -56.257 },
+      { id: 'G-2', name: 'Av. Carlos María Ramírez', lat: -34.893, lng: -56.244 },
+      { id: 'G-3', name: 'Bella Vista', lat: -34.887, lng: -56.211 },
+      { id: 'G-4', name: 'Av. Agraciada – Cuareim', lat: -34.898, lng: -56.203 },
+      { id: 'G-5', name: 'Plaza Independencia', lat: -34.906, lng: -56.196 },
+      { id: 'G-6', name: '18 de Julio – Florida', lat: -34.906, lng: -56.190 },
+      { id: 'G-7', name: 'Barrio Goes', lat: -34.899, lng: -56.189 },
+      { id: 'G-8', name: 'Terminal Tres Cruces', lat: -34.897, lng: -56.178 },
+      { id: 'G-9', name: 'Parque Batlle – Av. Italia', lat: -34.895, lng: -56.156 },
+      { id: 'G-10', name: 'Buceo – 26 de Marzo', lat: -34.897, lng: -56.116 },
+      { id: 'G-11', name: 'Punta Gorda – Av. Brasil', lat: -34.895, lng: -56.093 },
     ],
     schedule: {
       frequency: 'Cada 15–25 min',
@@ -195,6 +200,8 @@ export const busLines: BusLine[] = [
     },
   },
   {
+    // Villa del Cerro (extremo noroeste) → Cerro → Av. C.M. Ramírez →
+    // Puerto/Aduana → Plaza Independencia → 18 de Julio
     id: '180',
     number: '180',
     name: 'Villa del Cerro – Centro',
@@ -202,24 +209,27 @@ export const busLines: BusLine[] = [
     from: 'Villa del Cerro',
     to: 'Centro',
     route: [
-      [-34.9450, -56.2350],
-      [-34.9380, -56.2280],
-      [-34.9280, -56.2190],
-      [-34.9180, -56.2100],
-      [-34.9100, -56.2020],
-      [-34.9055, -56.1980],
-      [-34.9020, -56.1920],
-      [-34.9010, -56.1870],
+      [-34.906, -56.278], // Villa del Cerro terminal
+      [-34.906, -56.264], // Cerro norte
+      [-34.893, -56.257], // Cerro – Av. Carlos María Ramírez inicio
+      [-34.900, -56.240], // Av. Carlos María Ramírez central
+      [-34.905, -56.225], // Aguada oeste
+      [-34.906, -56.214], // Ciudad Vieja – Reconquista
+      [-34.906, -56.204], // Aduana / Puerto
+      [-34.906, -56.196], // Plaza Independencia
+      [-34.905, -56.189], // 18 de Julio – Ejido
+      [-34.905, -56.183], // 18 de Julio – Uruguay
     ],
     stops: [
-      { id: '180-1', name: 'Terminal Villa del Cerro', lat: -34.9450, lng: -56.2350 },
-      { id: '180-2', name: 'Cerro – Carlos María Ramírez', lat: -34.9380, lng: -56.2280 },
-      { id: '180-3', name: 'La Paloma – Barrio Reus', lat: -34.9280, lng: -56.2190 },
-      { id: '180-4', name: 'Barrio Sur – Pérez Castellano', lat: -34.9180, lng: -56.2100 },
-      { id: '180-5', name: 'Aduana – Rambla', lat: -34.9100, lng: -56.2020 },
-      { id: '180-6', name: 'Plaza Independencia', lat: -34.9055, lng: -56.1980 },
-      { id: '180-7', name: '18 de Julio – Ejido', lat: -34.9020, lng: -56.1920 },
-      { id: '180-8', name: '18 de Julio – Uruguay', lat: -34.9010, lng: -56.1870 },
+      { id: '180-1', name: 'Terminal Villa del Cerro', lat: -34.906, lng: -56.278 },
+      { id: '180-2', name: 'Cerro – Av. Carlos María Ramírez', lat: -34.893, lng: -56.257 },
+      { id: '180-3', name: 'Av. Carlos María Ramírez central', lat: -34.900, lng: -56.240 },
+      { id: '180-4', name: 'Aguada – Goes', lat: -34.905, lng: -56.225 },
+      { id: '180-5', name: 'Ciudad Vieja – Reconquista', lat: -34.906, lng: -56.214 },
+      { id: '180-6', name: 'Puerto / Aduana', lat: -34.906, lng: -56.204 },
+      { id: '180-7', name: 'Plaza Independencia', lat: -34.906, lng: -56.196 },
+      { id: '180-8', name: '18 de Julio – Ejido', lat: -34.905, lng: -56.189 },
+      { id: '180-9', name: '18 de Julio – Uruguay', lat: -34.905, lng: -56.183 },
     ],
     schedule: {
       frequency: 'Cada 20–30 min',
