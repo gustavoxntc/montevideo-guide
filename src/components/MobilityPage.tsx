@@ -1,5 +1,6 @@
 import { Bus, Smartphone, CreditCard, MapPin, Info, CheckCircle } from 'lucide-react'
 import { mobilityApps, stmInfo } from '../data/mobility'
+import STMRouteMap from './STMRouteMap'
 
 const typeLabels: Record<string, string> = {
   remise: 'Remise / Auto',
@@ -133,6 +134,22 @@ export default function MobilityPage() {
         </div>
       </section>
 
+      {/* STM Bus Lines */}
+      <section className="py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-uy-blue rounded-xl flex items-center justify-center">
+            <MapPin className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-uy-blue">Líneas de Ómnibus</h2>
+            <p className="text-slate-500 text-sm">Seleccioná una línea para ver el recorrido y los horarios</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <STMRouteMap />
+        </div>
+      </section>
+
       {/* Mobility Apps */}
       <section className="py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
         <div className="flex items-center gap-3 mb-6">
@@ -191,7 +208,7 @@ export default function MobilityPage() {
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
         <div className="bg-slate-800 rounded-2xl p-6 text-white">
           <h3 className="font-bold text-lg mb-4">Resumen rápido de movilidad</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-white/10 rounded-xl p-4">
               <Bus className="w-5 h-5 text-uy-yellow mb-2" />
               <p className="font-semibold text-sm">Ómnibus (STM)</p>
@@ -201,11 +218,6 @@ export default function MobilityPage() {
               <Smartphone className="w-5 h-5 text-uy-yellow mb-2" />
               <p className="font-semibold text-sm">Apps (Uber/Cabify)</p>
               <p className="text-slate-300 text-xs mt-1">Rápido y cómodo. Precio estimado antes de viajar. Ideal para horarios nocturnos.</p>
-            </div>
-            <div className="bg-white/10 rounded-xl p-4">
-              <CreditCard className="w-5 h-5 text-uy-yellow mb-2" />
-              <p className="font-semibold text-sm">Bicicleta (STM Bici)</p>
-              <p className="text-slate-300 text-xs mt-1">Los primeros 30 minutos son gratis. Ideal para la rambla y el centro.</p>
             </div>
           </div>
         </div>

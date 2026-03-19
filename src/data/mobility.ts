@@ -67,20 +67,11 @@ export const mobilityApps: MobilityApp[] = [
     availability: 'Zona centro y barrios cercanos',
     color: '#0ea5e9',
   },
-  {
-    id: 6,
-    name: 'Bicicletas STM',
-    type: 'bike',
-    description: 'Sistema público de bicicletas de Montevideo. Estaciones en toda la ciudad, ideal para trayectos cortos en la rambla y el centro.',
-    features: ['Sistema público municipal', 'Primer 30 minutos gratuito', 'Estaciones en toda la ciudad', 'Se usa con tarjeta STM', 'Ideal para la rambla'],
-    availability: 'Estaciones en toda la ciudad',
-    color: '#10b981',
-  },
 ];
 
 export const stmInfo: STMInfo = {
   title: 'Tarjeta STM - Transporte Público',
-  description: 'La tarjeta STM (Sistema de Transporte Metropolitano) es la tarjeta inteligente para usar el transporte público de Montevideo. Con ella pagás el boleto de ómnibus con descuento y accedés a las bicicletas públicas.',
+  description: 'La tarjeta STM (Sistema de Transporte Metropolitano) es la tarjeta inteligente para usar el transporte público de Montevideo. Con ella pagás el boleto de ómnibus con descuento en todas las líneas de la ciudad.',
   howToGet: [
     'Ir a cualquier Punto STM (Terminal de Tres Cruces, Aguada, Reducto)',
     'Presentar cédula de identidad uruguaya o documento de identidad',
