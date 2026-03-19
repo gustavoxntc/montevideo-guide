@@ -1,22 +1,39 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, useMap } from 'react-leaflet'
 import type { LatLngBoundsExpression } from 'leaflet'
-import { Clock, MapPin, AlertCircle, Radio, RefreshCw } from 'lucide-react'
-import { busLines, type BusLine } from '../data/stmRoutes'
+import { Clock, MapPin, AlertCircle, Radio, RefreshCw, ChevronDown } from 'lucide-react'
+import { busLines, type BusLine, type BusStop } from '../data/stmRoutes'
 import { getLiveBuses, busLng, type LiveBus } from '../services/stmApi'
 
-function FitBounds({ line }: { line: BusLine }) {
+function FitBounds({ positions }: { positions: [number, number][] }) {
   const map = useMap()
   useEffect(() => {
-    const lats = line.route.map(([lat]) => lat)
-    const lngs = line.route.map(([, lng]) => lng)
+    if (positions.length === 0) return
+    const lats = positions.map(([lat]) => lat)
+    const lngs = positions.map(([, lng]) => lng)
     const bounds: LatLngBoundsExpression = [
       [Math.min(...lats), Math.min(...lngs)],
       [Math.max(...lats), Math.max(...lngs)],
     ]
     map.fitBounds(bounds, { padding: [40, 40] })
-  }, [map, line])
+  }, [map, positions])
   return null
+}
+
+async function fetchOSRMRoute(stops: BusStop[]): Promise<[number, number][] | null> {
+  try {
+    const coords = stops.map(s => `${s.lng},${s.lat}`).join(';')
+    const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
+    if (!res.ok) return null
+    const data = await res.json()
+    const coords2d = data?.routes?.[0]?.geometry?.coordinates
+    if (!Array.isArray(coords2d)) return null
+    // OSRM returns [lng, lat], Leaflet needs [lat, lng]
+    return (coords2d as [number, number][]).map(([lng, lat]) => [lat, lng])
+  } catch {
+    return null
+  }
 }
 
 type DayType = 'weekday' | 'saturday' | 'sunday'
@@ -25,11 +42,15 @@ const REFRESH_INTERVAL_MS = 30_000
 
 export default function STMRouteMap() {
   const [selectedLine, setSelectedLine] = useState(busLines[0])
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [dayType, setDayType] = useState<DayType>('weekday')
   const [liveBuses, setLiveBuses] = useState<LiveBus[]>([])
   const [liveStatus, setLiveStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
+  const [routeGeometry, setRouteGeometry] = useState<[number, number][]>(selectedLine.route)
+  const [routeLoading, setRouteLoading] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const scheduleMap: Record<DayType, string[]> = {
     weekday: selectedLine.schedule.weekdayTimes,
@@ -62,24 +83,85 @@ export default function STMRouteMap() {
     }
   }, [selectedLine])
 
+  // Fetch OSRM road geometry whenever the line changes
+  useEffect(() => {
+    setRouteGeometry(selectedLine.route) // show fallback immediately
+    setRouteLoading(true)
+    fetchOSRMRoute(selectedLine.stops).then(geometry => {
+      if (geometry) setRouteGeometry(geometry)
+      setRouteLoading(false)
+    })
+  }, [selectedLine])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  function selectLine(line: BusLine) {
+    setSelectedLine(line)
+    setIsDropdownOpen(false)
+  }
+
   return (
     <div>
-      {/* Line selector */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {busLines.map(line => (
-          <button
-            key={line.id}
-            onClick={() => setSelectedLine(line)}
-            className={`px-4 py-2 rounded-full font-bold text-sm border-2 transition-all ${
-              selectedLine.id === line.id
-                ? 'text-white shadow-md scale-105'
-                : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
-            }`}
-            style={selectedLine.id === line.id ? { backgroundColor: line.color, borderColor: line.color } : {}}
-          >
-            Línea {line.number}
-          </button>
-        ))}
+      {/* Line selector – dropdown */}
+      <div className="relative mb-4" ref={dropdownRef}>
+        <button
+          onClick={() => setIsDropdownOpen(v => !v)}
+          className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white border-2 rounded-2xl shadow-sm transition-all hover:border-slate-300 focus:outline-none"
+          style={{ borderColor: selectedLine.color }}
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+              style={{ backgroundColor: selectedLine.color }}
+            >
+              {selectedLine.number}
+            </span>
+            <span className="text-slate-700 font-medium text-sm truncate">{selectedLine.name}</span>
+          </div>
+          <ChevronDown
+            className="w-4 h-4 text-slate-400 shrink-0 transition-transform"
+            style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          />
+        </button>
+
+        {isDropdownOpen && (
+          <div className="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
+            <div className="max-h-72 overflow-y-auto py-1">
+              {busLines.map(line => (
+                <button
+                  key={line.id}
+                  onClick={() => selectLine(line)}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-slate-50 ${
+                    selectedLine.id === line.id ? 'bg-slate-50' : ''
+                  }`}
+                >
+                  <span
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                    style={{ backgroundColor: line.color }}
+                  >
+                    {line.number}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-700 truncate">{line.name}</p>
+                    <p className="text-xs text-slate-400">{line.from} ↔ {line.to}</p>
+                  </div>
+                  {selectedLine.id === line.id && (
+                    <span className="ml-auto text-xs font-bold" style={{ color: line.color }}>✓</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Line summary + live indicator */}
@@ -89,6 +171,12 @@ export default function STMRouteMap() {
           <span className="font-semibold text-uy-blue">{selectedLine.name}</span>
           <span className="text-slate-400">·</span>
           <span className="text-slate-500">{selectedLine.from} ↔ {selectedLine.to}</span>
+          {routeLoading && (
+            <span className="flex items-center gap-1 text-xs text-slate-400 ml-1">
+              <RefreshCw className="w-3 h-3 animate-spin" />
+              Cargando ruta…
+            </span>
+          )}
         </div>
 
         {/* Live status badge */}
@@ -133,11 +221,11 @@ export default function STMRouteMap() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
-          <FitBounds line={selectedLine} />
+          <FitBounds positions={routeGeometry} />
 
-          {/* Route polyline */}
+          {/* Route polyline – follows actual streets via OSRM */}
           <Polyline
-            positions={selectedLine.route}
+            positions={routeGeometry}
             color={selectedLine.color}
             weight={5}
             opacity={0.85}
@@ -281,7 +369,8 @@ export default function STMRouteMap() {
       <div className="mt-3 flex items-start gap-2 text-xs text-slate-400 bg-slate-50 rounded-xl p-3 border border-slate-100">
         <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
         <span>
-          Las posiciones en tiempo real se actualizan cada 30 segundos desde la API oficial de STM Montevideo.
+          El trazado de rutas sigue calles reales (OSRM/OpenStreetMap). Las posiciones en tiempo real
+          se actualizan cada 30 segundos desde la API oficial de STM Montevideo.
           Los horarios son orientativos; para más información consultá la app oficial de STM.
         </span>
       </div>
