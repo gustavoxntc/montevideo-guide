@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "env": {
+    "STM_CLIENT_ID": "69ed5b19",
+    "STM_CLIENT_SECRET": "891dfbfc3611ebc34e903388a292fef3"
+  }
+}

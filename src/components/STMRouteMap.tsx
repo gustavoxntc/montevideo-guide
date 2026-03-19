@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, useMap } from 'react-leaflet'
 import type { LatLngBoundsExpression } from 'leaflet'
-import { Clock, MapPin, AlertCircle } from 'lucide-react'
+import { Clock, MapPin, AlertCircle, Radio, RefreshCw } from 'lucide-react'
 import { busLines, type BusLine } from '../data/stmRoutes'
+import { getLiveBuses, busLng, type LiveBus } from '../services/stmApi'
 
 function FitBounds({ line }: { line: BusLine }) {
   const map = useMap()
@@ -20,15 +21,46 @@ function FitBounds({ line }: { line: BusLine }) {
 
 type DayType = 'weekday' | 'saturday' | 'sunday'
 
+const REFRESH_INTERVAL_MS = 30_000
+
 export default function STMRouteMap() {
   const [selectedLine, setSelectedLine] = useState(busLines[0])
   const [dayType, setDayType] = useState<DayType>('weekday')
+  const [liveBuses, setLiveBuses] = useState<LiveBus[]>([])
+  const [liveStatus, setLiveStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const scheduleMap: Record<DayType, string[]> = {
     weekday: selectedLine.schedule.weekdayTimes,
     saturday: selectedLine.schedule.saturdayTimes,
     sunday: selectedLine.schedule.sundayTimes,
   }
+
+  async function fetchLive(line: BusLine) {
+    setLiveStatus('loading')
+    try {
+      const buses = await getLiveBuses(line.number)
+      setLiveBuses(buses)
+      setLastUpdate(new Date())
+      setLiveStatus('ok')
+    } catch {
+      setLiveStatus('error')
+      setLiveBuses([])
+    }
+  }
+
+  useEffect(() => {
+    setLiveBuses([])
+    setLiveStatus('idle')
+    fetchLive(selectedLine)
+
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = setInterval(() => fetchLive(selectedLine), REFRESH_INTERVAL_MS)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [selectedLine])
 
   return (
     <div>
@@ -50,12 +82,44 @@ export default function STMRouteMap() {
         ))}
       </div>
 
-      {/* Line summary */}
-      <div className="flex items-center gap-2 mb-3 text-sm">
-        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: selectedLine.color }} />
-        <span className="font-semibold text-uy-blue">{selectedLine.name}</span>
-        <span className="text-slate-400">·</span>
-        <span className="text-slate-500">{selectedLine.from} ↔ {selectedLine.to}</span>
+      {/* Line summary + live indicator */}
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <div className="flex items-center gap-2 text-sm">
+          <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: selectedLine.color }} />
+          <span className="font-semibold text-uy-blue">{selectedLine.name}</span>
+          <span className="text-slate-400">·</span>
+          <span className="text-slate-500">{selectedLine.from} ↔ {selectedLine.to}</span>
+        </div>
+
+        {/* Live status badge */}
+        <div className="flex items-center gap-1.5 text-xs">
+          {liveStatus === 'loading' && (
+            <span className="flex items-center gap-1 text-slate-400">
+              <RefreshCw className="w-3 h-3 animate-spin" />
+              Actualizando…
+            </span>
+          )}
+          {liveStatus === 'ok' && liveBuses.length > 0 && (
+            <span className="flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full">
+              <Radio className="w-3 h-3" />
+              {liveBuses.length} bus{liveBuses.length !== 1 ? 'es' : ''} en ruta
+              {lastUpdate && (
+                <span className="text-green-500 ml-1">
+                  · {lastUpdate.toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+            </span>
+          )}
+          {liveStatus === 'ok' && liveBuses.length === 0 && (
+            <span className="text-slate-400 text-xs">Sin buses activos ahora</span>
+          )}
+          {liveStatus === 'error' && (
+            <span className="flex items-center gap-1 text-amber-600 text-xs">
+              <AlertCircle className="w-3 h-3" />
+              Sin datos en tiempo real
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Map */}
@@ -70,12 +134,16 @@ export default function STMRouteMap() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           <FitBounds line={selectedLine} />
+
+          {/* Route polyline */}
           <Polyline
             positions={selectedLine.route}
             color={selectedLine.color}
             weight={5}
             opacity={0.85}
           />
+
+          {/* Static stops */}
           {selectedLine.stops.map((stop, i) => (
             <CircleMarker
               key={stop.id}
@@ -94,6 +162,38 @@ export default function STMRouteMap() {
               </Popup>
             </CircleMarker>
           ))}
+
+          {/* Live bus markers */}
+          {liveBuses.map((bus, i) => {
+            const lng = busLng(bus)
+            if (!bus.lat || !lng) return null
+            return (
+              <CircleMarker
+                key={bus.busId ?? bus.id ?? i}
+                center={[bus.lat, lng]}
+                radius={8}
+                color="white"
+                fillColor={selectedLine.color}
+                fillOpacity={0.95}
+                weight={2}
+              >
+                <Popup>
+                  <div className="text-sm">
+                    <p className="font-semibold text-green-700">🚌 Bus en ruta</p>
+                    <p className="text-slate-500 text-xs">Línea {bus.lineCode ?? bus.line ?? selectedLine.number}</p>
+                    {bus.speed !== undefined && (
+                      <p className="text-slate-500 text-xs">Velocidad: {bus.speed} km/h</p>
+                    )}
+                    {lastUpdate && (
+                      <p className="text-slate-400 text-xs mt-1">
+                        Actualizado: {lastUpdate.toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </p>
+                    )}
+                  </div>
+                </Popup>
+              </CircleMarker>
+            )
+          })}
         </MapContainer>
       </div>
 
@@ -180,7 +280,10 @@ export default function STMRouteMap() {
       {/* Disclaimer */}
       <div className="mt-3 flex items-start gap-2 text-xs text-slate-400 bg-slate-50 rounded-xl p-3 border border-slate-100">
         <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-        <span>Los horarios son orientativos. Para información en tiempo real consultá la app oficial de STM o escaneá el QR de la parada.</span>
+        <span>
+          Las posiciones en tiempo real se actualizan cada 30 segundos desde la API oficial de STM Montevideo.
+          Los horarios son orientativos; para más información consultá la app oficial de STM.
+        </span>
       </div>
     </div>
   )
