@@ -1,6 +1,6 @@
-import { Bus, Smartphone, CreditCard, MapPin, Info, CheckCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Bus, Smartphone, CreditCard, MapPin, Info, CheckCircle, ArrowRight, Radio } from 'lucide-react'
 import { mobilityApps, stmInfo } from '../data/mobility'
-import STMFullMap from './STMFullMap'
 
 const typeLabels: Record<string, string> = {
   remise: 'Remise / Auto',
@@ -134,20 +134,36 @@ export default function MobilityPage() {
         </div>
       </section>
 
-      {/* STM Bus Lines */}
+      {/* STM Lines CTA */}
       <section className="py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-uy-blue rounded-xl flex items-center justify-center">
-            <MapPin className="w-5 h-5 text-white" />
+        <Link
+          to="/stm"
+          className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white rounded-2xl p-6 border-2 border-uy-blue/20 shadow-sm hover:border-uy-blue hover:shadow-md transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-uy-blue rounded-2xl flex items-center justify-center shadow-md shrink-0">
+              <Bus className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-uy-blue">Mapa de Líneas de Ómnibus</h2>
+              <p className="text-slate-500 text-sm mt-0.5">
+                146 líneas urbanas y suburbanas — trazado exacto, paradas y tiempo real
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {['Trazado exacto por calles', 'Paradas con nombre', 'Tiempo real'].map(tag => (
+                  <span key={tag} className="text-xs bg-blue-50 text-uy-blue border border-blue-100 px-2 py-0.5 rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-uy-blue">Líneas de Ómnibus</h2>
-            <p className="text-slate-500 text-sm">Todas las líneas urbanas y suburbanas — trazado exacto, paradas y tiempo real</p>
+          <div className="flex items-center gap-2 text-uy-blue font-semibold text-sm shrink-0 group-hover:gap-3 transition-all">
+            <Radio className="w-4 h-4 text-green-500" />
+            Ver mapa de líneas
+            <ArrowRight className="w-4 h-4" />
           </div>
-        </div>
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <STMFullMap />
-        </div>
+        </Link>
       </section>
 
       {/* Mobility Apps */}
