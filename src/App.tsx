@@ -5,6 +5,7 @@ import StudyPage from './components/StudyPage'
 import WorkPage from './components/WorkPage'
 import MobilityPage from './components/MobilityPage'
 import TourismPage from './components/TourismPage'
+import STMPage from './components/STMPage'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="trabajar" element={<WorkPage />} />
           <Route path="moverse" element={<MobilityPage />} />
           <Route path="turismo" element={<TourismPage />} />
+          <Route path="stm" element={<STMPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
