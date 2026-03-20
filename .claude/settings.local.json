@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Gustavo/Documents/GitHub/montevideo-guide/**)",
+      "Bash(pdftotext \"Manual_de_conexion_a_Montevideo_API_v1.0.pdf\" -)",
+      "Bash(npm install:*)",
+      "Bash(node scripts/process-gtfs.mjs)",
+      "Bash(xxd)",
+      "Bash(node -e \":*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

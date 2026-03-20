@@ -1,6 +1,6 @@
 import { Bus, Smartphone, CreditCard, MapPin, Info, CheckCircle } from 'lucide-react'
 import { mobilityApps, stmInfo } from '../data/mobility'
-import STMRouteMap from './STMRouteMap'
+import STMFullMap from './STMFullMap'
 
 const typeLabels: Record<string, string> = {
   remise: 'Remise / Auto',
@@ -142,11 +142,11 @@ export default function MobilityPage() {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-uy-blue">Líneas de Ómnibus</h2>
-            <p className="text-slate-500 text-sm">Seleccioná una línea para ver el recorrido y los horarios</p>
+            <p className="text-slate-500 text-sm">Todas las líneas urbanas y suburbanas — trazado exacto, paradas y tiempo real</p>
           </div>
         </div>
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <STMRouteMap />
+          <STMFullMap />
         </div>
       </section>
 
