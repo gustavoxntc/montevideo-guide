@@ -1,27 +1,39 @@
 /**
  * Cliente para el proxy STM (/api/stm).
- * En desarrollo usa la URL relativa; en producción Vercel resuelve la función.
+ * La API real devuelve la posición en location.coordinates: [lng, lat] (GeoJSON).
  */
 
 export interface LiveBus {
   lat: number
-  /** La API puede devolver "lon" o "lng" */
-  lon?: number
-  lng?: number
-  lineCode?: string
+  lng: number
   line?: string
-  variant?: string
-  speed?: number
-  bearing?: number
   busId?: string
-  id?: string
-  /** Timestamp ISO o Unix ms */
-  timestamp?: string | number
+  speed?: number
+  timestamp?: string
+  origin?: string
+  destination?: string
+  subline?: string
 }
 
-/** Normaliza el campo de longitud (lon vs lng) */
-export function busLng(bus: LiveBus): number {
-  return (bus.lng ?? bus.lon) as number
+/** Formato crudo que devuelve la API STM */
+interface RawSTMBus {
+  busId?: number | string
+  line?: string
+  lineVariantId?: number
+  location?: {
+    type: 'Point'
+    coordinates: [number, number]  // [lng, lat]
+  }
+  speed?: number
+  timestamp?: string
+  origin?: string
+  destination?: string
+  subline?: string
+  company?: string
+  /** Algunos endpoints alternativos usan lat/lon directo */
+  lat?: number
+  lon?: number
+  lng?: number
 }
 
 async function stmFetch(endpoint: string, params: Record<string, string> = {}): Promise<unknown> {
@@ -34,15 +46,34 @@ async function stmFetch(endpoint: string, params: Record<string, string> = {}): 
   return res.json()
 }
 
+function normalizebus(b: RawSTMBus): LiveBus | null {
+  // Coordenadas del formato GeoJSON: coordinates[0]=lng, coordinates[1]=lat
+  const lat = b.location?.coordinates?.[1] ?? b.lat ?? 0
+  const lng = b.location?.coordinates?.[0] ?? b.lng ?? b.lon ?? 0
+  if (!lat || !lng) return null
+  return {
+    lat,
+    lng,
+    line:        b.line,
+    busId:       String(b.busId ?? ''),
+    speed:       b.speed,
+    timestamp:   b.timestamp,
+    origin:      b.origin,
+    destination: b.destination,
+    subline:     b.subline,
+  }
+}
+
 /** Posiciones en tiempo real para una o varias líneas (ej: "121" o "121,103") */
 export async function getLiveBuses(lines: string): Promise<LiveBus[]> {
   const data = await stmFetch('buses', { lines })
-  // La API puede devolver un array directo o un objeto con campo "data"/"buses"
-  if (Array.isArray(data)) return data as LiveBus[]
-  const obj = data as Record<string, unknown>
-  if (Array.isArray(obj.data)) return obj.data as LiveBus[]
-  if (Array.isArray(obj.buses)) return obj.buses as LiveBus[]
-  return []
+  const raw: RawSTMBus[] = Array.isArray(data)
+    ? (data as RawSTMBus[])
+    : Array.isArray((data as Record<string, unknown>).data)
+      ? ((data as Record<string, unknown>).data as RawSTMBus[])
+      : []
+
+  return raw.map(normalizebus).filter((b): b is LiveBus => b !== null)
 }
 
 /** Próximos buses en una parada */
