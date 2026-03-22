@@ -1,84 +1,93 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
-import { MapPin, GraduationCap, Briefcase, Bus, Camera, Menu, X } from 'lucide-react'
-import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 const navItems = [
-  { to: '/', label: 'Inicio', icon: MapPin, exact: true },
-  { to: '/estudiar', label: 'Estudiar', icon: GraduationCap, exact: false },
-  { to: '/trabajar', label: 'Trabajar', icon: Briefcase, exact: false },
-  { to: '/moverse', label: 'Moverse', icon: Bus, exact: false },
-  { to: '/turismo', label: 'Turismo', icon: Camera, exact: false },
+  { to: '/estudiar', label: 'Estudiar' },
+  { to: '/trabajar', label: 'Trabajar' },
+  { to: '/turismo', label: '¿Qué hacer?' },
+  { to: '/moverse', label: 'Moverme' },
 ]
 
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
+  const isHome = location.pathname === '/'
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Close mobile menu on route change
+  useEffect(() => setMenuOpen(false), [location.pathname])
+
+  const navBg = isHome
+    ? scrolled
+      ? 'bg-white/15 backdrop-blur-lg border-b border-white/20'
+      : 'bg-transparent'
+    : 'bg-ori-dark'
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Header / Navbar */}
-      <header className="bg-uy-blue shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <NavLink to="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 bg-uy-yellow rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-                <MapPin className="w-5 h-5 text-uy-blue" />
-              </div>
-              <span className="text-white font-bold text-lg tracking-tight hidden sm:block">
-                Vivir en <span className="text-uy-yellow">Montevideo</span>
-              </span>
-            </NavLink>
+    <div className="min-h-screen bg-ori-off-white flex flex-col">
 
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navItems.map(({ to, label, icon: Icon, exact }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={exact}
-                  className={({ isActive }) =>
-                    `flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? 'bg-uy-yellow text-uy-blue shadow-md'
-                        : 'text-blue-100 hover:bg-white/10 hover:text-white'
-                    }`
-                  }
-                >
-                  <Icon className="w-4 h-4" />
-                  {label}
-                </NavLink>
-              ))}
-            </nav>
+      {/* Navbar */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}
+      >
+        <div className="flex items-center justify-between px-6 md:px-12 h-16">
 
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
+          {/* Logo */}
+          <NavLink
+            to="/"
+            className="font-playfair text-2xl font-black text-white tracking-tight leading-none"
+          >
+            Oriundos
+          </NavLink>
 
-        {/* Mobile Nav */}
-        {menuOpen && (
-          <div className="md:hidden bg-uy-blue border-t border-blue-700 pb-3 px-4">
-            {navItems.map(({ to, label, icon: Icon, exact }) => (
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navItems.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                end={exact}
-                onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium my-0.5 transition-all ${
-                    isActive
-                      ? 'bg-uy-yellow text-uy-blue'
-                      : 'text-blue-100 hover:bg-white/10'
+                  `relative text-sm font-medium uppercase tracking-[0.08em] transition-colors group ${
+                    isActive ? 'text-ori-celeste' : 'text-white hover:text-ori-celeste'
                   }`
                 }
               >
-                <Icon className="w-4 h-4" />
+                {label}
+                <span className="absolute -bottom-1 left-0 h-0.5 bg-ori-amarillo w-0 group-hover:w-full transition-all duration-300" />
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Hamburger */}
+          <button
+            className="md:hidden text-white p-1"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menú"
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="md:hidden bg-ori-dark/95 backdrop-blur-lg border-t border-white/10 px-6 pb-4">
+            {navItems.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `block py-3 text-sm font-medium uppercase tracking-widest border-b border-white/5 last:border-0 ${
+                    isActive ? 'text-ori-celeste' : 'text-white/80 hover:text-white'
+                  }`
+                }
+              >
                 {label}
               </NavLink>
             ))}
@@ -86,44 +95,19 @@ export default function Layout() {
         )}
       </header>
 
-      {/* Page Content */}
-      <main className="flex-1">
+      {/* Page content — inner pages need top padding for fixed navbar */}
+      <main className={`flex-1 ${!isHome ? 'pt-16' : ''}`}>
         <div className="page-content">
           <Outlet />
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-uy-blue text-blue-200 py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-uy-yellow rounded-full flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-uy-blue" />
-              </div>
-              <span className="font-semibold text-white">Vivir en Montevideo</span>
-            </div>
-            <p className="text-sm text-center">
-              Guía para personas del interior del Uruguay que se mudan a Montevideo
-            </p>
-            <div className="flex gap-4 text-sm">
-              {navItems.slice(1).map(({ to, label }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  className={`hover:text-white transition-colors ${
-                    location.pathname === to ? 'text-uy-yellow' : ''
-                  }`}
-                >
-                  {label}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-          <div className="mt-6 pt-4 border-t border-blue-700 text-center text-xs text-blue-400">
-            Información orientativa. Verificar datos actualizados en fuentes oficiales.
-          </div>
-        </div>
+      <footer className="bg-ori-dark text-white/45 text-center py-8 px-4 text-sm tracking-wide">
+        <p>
+          © 2025 <strong className="text-ori-celeste">Oriundos</strong>
+          {' '}· Del interior a Montevideo · Hecho con ❤️ desde Uruguay
+        </p>
       </footer>
     </div>
   )
